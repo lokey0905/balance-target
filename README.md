@@ -4,7 +4,7 @@
 
 信用卡扣繳後，即使把扣掉的金額補回去，整個月的平均存款仍可能低於門檻。存準讓你輸入期初資產與每日異動，計算期間平均，反推最低追加金額，並比較提早或延後補存的差異。
 
-[線上體驗（部署準備中）](https://lokey0905.github.io/balance-target/) · [GitHub](https://github.com/lokey0905/balance-target)
+[線上體驗](https://lokey0905.github.io/balance-target/) · [GitHub](https://github.com/lokey0905/balance-target)
 
 ## 功能
 
