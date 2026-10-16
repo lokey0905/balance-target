@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="存準 BalanceTarget：依每日資產與扣繳紀錄，計算平均資產、最低補存金額，並比較不同補存日期。所有試算在瀏覽器內完成。">
+<meta name="theme-color" content="#194b3d">
+<title>存準 BalanceTarget｜平均資產門檻試算器</title>
+<style>
+:root{--bg:#f4f6f1;--paper:#fff;--ink:#203e34;--muted:#66776e;--green:#215b47;--deep:#173f32;--mint:#d5f3ad;--line:#e1e7df;--soft:#edf2e9;--amber:#946021;--red:#ad443a;--radius:20px;--shadow:0 8px 30px #1c3c2410}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:14px;line-height:1.65}button,input,select,textarea{font:inherit}button,a,input,select,summary{ -webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.5}a{color:var(--green)}button,input,select,textarea{border-radius:9px}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #83b872;outline-offset:4px}input:focus,select:focus,textarea:focus{outline:2px solid #9cbda4;outline-offset:1px}button{transition:background .15s,transform .15s}button:active:not(:disabled){transform:translateY(1px)}[hidden]{display:none!important}.num{font-variant-numeric:tabular-nums;letter-spacing:-.035em}svg{display:block}.icon{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}.skip{position:absolute;top:-80px;left:16px;background:var(--deep);color:white;padding:12px;z-index:20}.skip:focus{top:10px}
+.site-header{border-bottom:1px solid var(--line);background:#ffffffba}.header-inner{max-width:1312px;margin:auto;height:78px;padding:0 32px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;gap:11px;align-items:center;text-decoration:none;color:var(--ink)}.brand-icon{width:38px;height:38px;background:var(--deep);border-radius:12px;display:grid;place-items:center;color:var(--mint)}.brand-icon svg{width:24px;height:24px}.brand-name{font-weight:750;font-size:22px;letter-spacing:2px}.brand-en{color:var(--muted);font-size:12px;letter-spacing:.06em;margin-left:10px;font-weight:500}.header-right{display:flex;align-items:center;gap:26px}.local-label{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}.local-dot{width:6px;height:6px;background:#749360;border-radius:100%}.text-button{border:0;background:none;color:var(--ink);display:inline-flex;gap:7px;align-items:center;padding:7px 0;font-size:13px;font-weight:600}
+main{max-width:1312px;margin:0 auto;padding:34px 32px 0}.intro{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;gap:20px}.eyebrow{font-size:10px;letter-spacing:.17em;color:#6b876f;font-weight:700;margin:0 0 8px}.intro h1{font-size:30px;letter-spacing:-1px;margin:0 0 7px;font-weight:750}.intro p{margin:0;color:var(--muted);font-size:14px}.intro-note{color:#789177;font-size:12px;display:flex;align-items:center;gap:9px;white-space:nowrap;padding-bottom:4px}.workspace{display:grid;grid-template-columns:392px minmax(0,1fr);gap:24px;align-items:start}.input-stack{display:grid;gap:16px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 2px 6px #183c2618;padding:24px}.panel-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:19px}.section-title{font-size:16px;letter-spacing:-.4px;margin:0;display:flex;align-items:center;gap:9px}.section-number{font-size:10px;letter-spacing:.03em;color:#8a9b8c;background:var(--soft);border-radius:5px;padding:3px 6px}.tag{font-size:10px;letter-spacing:.03em;border-radius:5px;padding:3px 7px;background:var(--soft);color:var(--muted);white-space:nowrap}.mode-tabs{background:#f1f4ed;padding:4px;border-radius:10px;display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:21px}.mode-tab{background:transparent;border:0;color:var(--muted);font-size:12px;padding:9px 3px;font-weight:600}.mode-tab[aria-pressed=true]{background:var(--paper);color:var(--green);box-shadow:0 2px 5px #224e3012}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field label,.field-label{font-size:12px;font-weight:650;color:#42594b}.field input,.field select,.field textarea{width:100%;min-width:0;padding:10px 11px;border:1px solid #dce3d9;background:#fff;color:var(--ink);line-height:1.5;min-height:43px}.field input:disabled,.field select:disabled{background:#f5f7f2;color:#788277}.field input[aria-invalid=true]{border-color:var(--red)}.field small,.help{font-size:11px;color:var(--muted);line-height:1.6;margin:0}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 12px}.span2{grid-column:1/-1}.money-input{position:relative}.money-input input{padding-right:38px;font-variant-numeric:tabular-nums}.money-input span{position:absolute;right:12px;top:11px;color:#879081;font-size:11px;pointer-events:none}.quick-buttons{display:flex;gap:6px;margin-top:3px}.quick{flex:1;background:#f6f8f3;border:1px solid #e6eae1;padding:4px 5px;font-size:10px;color:var(--muted)}.quick:hover{background:#e7efe0}.period-display{background:#f0f5e9;border:1px solid #e3ecd9;border-radius:9px;padding:11px 12px;display:flex;gap:8px;align-items:flex-start;margin:15px 0;color:#4e6950;font-size:11px}.period-display .icon{width:15px;height:15px;margin-top:2px}.period-display strong{font-weight:650;display:block;font-size:12px}.snapshot-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.snapshot-fields label{font-size:11px}.unicard-note{font-size:11px;margin:9px 0 0;color:var(--muted)}.card-input{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.card-input label{display:flex;justify-content:space-between}.optional{font-weight:400;color:#8a9489}
+.records{display:grid;gap:12px}.record{border:1px solid var(--line);border-radius:11px;padding:12px;background:#fbfcf9}.record-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}.record-title{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}.record-dot{width:5px;height:5px;background:#a7b79b;border-radius:100%}.icon-button{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:0;background:none;color:#849080}.icon-button:hover{color:var(--red);background:#faeee9}.record-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:9px}.record .field input,.record .field select{font-size:12px;min-height:37px;padding:7px 8px}.record .field label{font-size:10px;font-weight:500}.record input[data-key=note]{background:transparent;border:0;border-bottom:1px solid #e7ecdf;border-radius:0;padding:5px 0;min-height:29px;font-size:11px}.record-error{color:var(--red);font-size:11px;margin:8px 0 0}.record.outside{border-color:#d6a29a;background:#fff9f6}.add-button{background:#f6f8f1;border:1px dashed #c9d5bd;width:100%;padding:9px;color:var(--green);font-size:12px;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px}.empty-records{color:var(--muted);font-size:12px;text-align:center;padding:14px 4px}.records-help{margin-top:12px}.topup-input{display:flex;gap:10px;align-items:end}.topup-input .field{flex:1}.button-primary{background:var(--green);color:#fff;border:1px solid var(--green);padding:11px 16px;display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:650;font-size:13px}.calculate{width:100%;margin-top:17px;min-height:46px}.button-primary:hover{background:var(--deep)}.button-secondary{background:#fff;color:var(--green);border:1px solid #cfdac7;padding:9px 13px;font-size:12px;display:inline-flex;align-items:center;gap:7px;justify-content:center}.button-secondary:hover{background:#f1f6ea}.example-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:13px 0 0}.example-actions button{font-size:11px;padding:6px 0}.example-actions .text-button:last-child{margin-left:auto;color:#8a7b69}.privacy{font-size:10px;color:#81907f;display:flex;gap:7px;align-items:flex-start;margin:14px 0 0}.privacy .icon{width:13px;height:13px;margin-top:2px}.errors{background:#fff0eb;border:1px solid #eac2b7;color:#963f33;border-radius:10px;padding:13px 15px;font-size:12px;margin-bottom:16px}.errors ul{margin:5px 0 0;padding-left:20px}.result-stack{display:grid;gap:19px}.result-header{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px;gap:10px}.result-header .section-title{font-size:13px}.result-caption{font-size:10px;color:var(--muted);margin:0}.status-pill{border:1px solid #e6d7b8;color:#977446;background:#fbf6e9;border-radius:6px;padding:3px 7px;font-size:10px;display:inline-flex;align-items:center;gap:5px}.status-pill.good{background:#edf5e5;color:#487043;border-color:#d3e3c7}.status-pill.neutral{background:#f0f2ed;color:var(--muted);border-color:#dce3d5}.metrics{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px;margin-bottom:18px}.metric small{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}.metric strong{font-size:22px;font-weight:650;line-height:1.2}.metric:first-child strong{font-size:31px;letter-spacing:-1.3px}.metric strong em{font-style:normal;font-size:13px;color:#82917f;letter-spacing:0;margin-left:3px}.metric p{margin:5px 0 0;font-size:10px;color:#8d947f}.metric.difference strong{color:#a67b37}.progress-track{height:5px;border-radius:5px;background:#edf0e8;overflow:hidden}.progress-fill{height:100%;background:#9cb780;border-radius:5px;width:0}.progress-label{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:7px}.projection-note{font-size:10px;color:#86917f;margin:9px 0 0}.summary-card{padding:21px 24px}.topup-card{background:var(--deep);color:white;border-radius:var(--radius);padding:26px 28px 22px;position:relative;overflow:hidden}.topup-card:before{content:"";position:absolute;border:1px solid #ffffff09;width:260px;height:260px;border-radius:50%;right:-80px;top:-100px;pointer-events:none}.topup-card:after{content:"";position:absolute;border:1px solid #ffffff09;width:200px;height:200px;border-radius:50%;right:-50px;top:-70px;pointer-events:none}.topup-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;position:relative;z-index:1}.topup-heading h2{font-size:13px;font-weight:500;margin:0;color:#d7e6d4;display:flex;align-items:center;gap:8px}.topup-heading .tag{background:#ffffff10;color:#b7ceb7;border:1px solid #ffffff16;font-size:10px}.topup-amount{display:flex;align-items:baseline;gap:9px;margin:8px 0 2px}.topup-amount small{color:#9dbb9e;font-size:13px}.topup-amount strong{font-size:49px;font-weight:600;letter-spacing:-1.5px;color:var(--mint);line-height:1.35}.topup-date{color:#aac0ab;font-size:11px;margin:0}.topup-detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:21px;border-top:1px solid #ffffff20;padding-top:17px;gap:12px}.topup-detail-grid small{font-size:10px;color:#a2bba3;display:block;margin-bottom:5px}.topup-detail-grid strong{font-size:17px;font-weight:500;letter-spacing:-.3px}.topup-footnote{font-size:10px;color:#a2bba3;margin:14px 0 0}.topup-historical{color:#ead8a9}.bank-check{display:flex;align-items:start;gap:10px;background:#edf3e5;border:1px solid #dce8d0;border-radius:10px;padding:12px 15px;margin-top:17px}.bank-check .icon{color:#6d8959;width:17px;height:17px;margin-top:2px}.bank-check p{margin:0;font-size:11px;color:#5f7358}.bank-check .bank-labels{display:flex;gap:15px;flex-wrap:wrap;font-size:11px;font-weight:600;color:#49623f;margin-bottom:4px}.bank-check .bank-conclusion{font-size:10px}.chart-panel{padding:22px 24px 16px}.chart-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.chart-heading h2{font-size:14px;margin:0}.legend{display:flex;gap:12px;font-size:10px;color:var(--muted);align-items:center}.legend span{display:flex;align-items:center;gap:5px}.legend i{width:12px;height:2px;background:#52735b;display:inline-block}.legend .planned{background:#a8b981}.legend .target{height:0;background:none;border-top:2px dashed #bdad8a}.chart-frame{position:relative}.chart-frame svg{width:100%;height:auto;max-height:270px;overflow:visible}.chart-foot{font-size:10px;color:#81917e;margin:0;display:flex;justify-content:space-between;gap:10px}.chart-foot a{color:#6b8065}.comparison-panel{padding:22px 24px}.comparison-panel .panel-header{margin-bottom:6px}.comparison-panel .help{font-size:10px}.comparison-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.comparison-card{background:#f7f9f3;border:1px solid #e5eadf;border-radius:11px;padding:13px 12px}.comparison-card.recommended{background:#eff5e6;border-color:#bcccaa}.comparison-card label{font-size:10px;color:var(--muted);display:block;margin-bottom:7px}.comparison-card input{width:100%;min-width:0;background:white;border:1px solid #dce4d3;font-size:11px;padding:6px;border-radius:6px;color:var(--ink)}.comparison-card strong{display:block;font-size:21px;font-weight:600;margin-top:10px}.comparison-card .compare-meta{color:#7e8b75;font-size:10px;margin:0}.comparison-card .history{color:#9b8053;font-size:9px;margin-top:5px}.compare-badge{font-size:9px;color:#6d8559;float:right}.comparison-card .compare-average{font-size:10px;color:#6a7d63;margin-top:5px}.detail-panel{padding:0;overflow:hidden}.detail-panel summary{cursor:pointer;list-style:none;padding:19px 24px;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600}.detail-panel summary::-webkit-details-marker{display:none}.detail-panel summary .icon{width:15px}.detail-panel[open] summary{border-bottom:1px solid var(--line)}.detail-panel[open] summary .icon{transform:rotate(180deg)}.detail-body{padding:18px 24px}.detail-body h3{font-size:12px;margin:18px 0 8px}.detail-body h3:first-child{margin-top:0}.table-scroll{overflow-x:auto;max-width:100%}table{border-collapse:collapse;width:100%;font-size:11px;text-align:right;white-space:nowrap}th{font-weight:500;color:var(--muted);background:#f6f8f2}th,td{padding:10px 9px;border-bottom:1px solid #edf0e8}th:first-child,td:first-child{text-align:left}.table-caption{font-size:10px;color:#83917b;margin:8px 0}.formula{font-size:11px;background:#f4f7ee;padding:12px;border-radius:9px;color:#6e7f62;line-height:1.8}.result-bottom{display:flex;justify-content:space-between;align-items:center;padding:1px 1px 0;gap:14px}.result-bottom span{font-size:10px;color:#8b9784}.result-bottom .button-secondary{background:transparent;font-size:11px}.placeholder{padding:80px 28px;text-align:center;border:1px dashed #ccd9c3;border-radius:20px;background:#f9fbf5}.placeholder .brand-icon{margin:0 auto 20px;background:#e3ecd8;color:#69835a;width:55px;height:55px}.placeholder h2{font-size:19px}.placeholder p{color:var(--muted);font-size:13px}.placeholder button{margin-top:12px}.footer{max-width:1312px;margin:38px auto 0;padding:24px 32px 30px;border-top:1px solid var(--line);display:flex;gap:60px;justify-content:space-between}.footer p{font-size:10px;color:#8c9685;line-height:1.8;margin:0;max-width:850px}.footer-brand{font-size:10px;color:#8b977f;white-space:nowrap;letter-spacing:.05em}dialog{border:1px solid var(--line);border-radius:20px;padding:28px;max-width:560px;width:calc(100% - 32px);color:var(--ink);box-shadow:0 20px 80px #16302033}dialog::backdrop{background:#102a2355;backdrop-filter:blur(3px)}dialog h2{margin:0 0 12px;font-size:21px}dialog p,dialog li{font-size:13px;color:var(--muted)}dialog ul{padding-left:20px}.dialog-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px}.dialog-close{float:right}.modal-subhead{font-size:14px;margin-top:24px;margin-bottom:8px}.summary-text{width:100%;min-height:260px;border:1px solid var(--line);padding:12px;font-size:12px;resize:vertical;color:var(--ink);line-height:1.7;background:#f9fbf6}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;max-width:calc(100% - 32px);padding:12px 22px;border-radius:10px;box-shadow:var(--shadow);background:var(--deep);color:white;font-size:12px;text-align:center}
+@media(min-width:1450px){main{padding-top:43px}.intro{margin-bottom:32px}.workspace{gap:28px;grid-template-columns:405px minmax(0,1fr)}}
+@media(max-width:1080px){.workspace{grid-template-columns:350px minmax(0,1fr);gap:18px}.panel{padding:20px}.comparison-panel,.chart-panel{padding:20px}.metric strong{font-size:19px}.metric:first-child strong{font-size:26px}.topup-card{padding:24px}.comparison-grid{gap:7px}.comparison-card{padding:11px 8px}.comparison-card strong{font-size:18px}.header-inner,main{padding-left:24px;padding-right:24px}.legend{gap:7px;font-size:9px}.intro-note{display:none}}
+@media(max-width:850px){.workspace{grid-template-columns:1fr;gap:24px}.input-stack{grid-template-columns:1fr 1fr;align-items:start}.input-stack>.settings-panel{grid-row:span 2}.input-stack>.action-panel{grid-column:2}.input-stack>.records-panel{grid-column:2}.intro h1{font-size:28px}.results{min-width:0}.metric:first-child strong{font-size:31px}.metric strong{font-size:24px}.comparison-card strong{font-size:24px}.footer{gap:25px}.chart-frame svg{max-height:300px}}
+@media(max-width:600px){.header-inner{height:66px;padding:0 20px}.brand-name{font-size:19px}.brand-en{font-size:10px;margin-left:7px}.brand-icon{width:33px;height:33px;border-radius:10px}.header-right{gap:12px}.local-label{display:none}.header-right .text-button{font-size:11px}.header-right .icon{width:15px}.intro{margin:0 0 22px}.intro h1{font-size:25px;margin-top:3px;letter-spacing:-1px}.intro p{font-size:12px;line-height:1.8;max-width:290px}.eyebrow{font-size:9px}main{padding:26px 16px 0}.input-stack{display:grid;grid-template-columns:1fr;gap:14px}.input-stack>.settings-panel,.input-stack>.records-panel,.input-stack>.action-panel{grid-column:1;grid-row:auto}.panel{border-radius:16px;padding:20px}.section-title{font-size:15px}.form-grid{gap:15px 12px}.field input,.field select{font-size:14px}.record .field input,.record .field select{font-size:13px}.result-stack{gap:15px}.summary-card{padding:20px}.metrics{grid-template-columns:1fr 1fr;margin-bottom:18px;row-gap:17px}.metric:first-child{grid-column:1/-1}.metric:first-child strong{font-size:34px}.metric strong{font-size:23px}.metric p{font-size:10px}.result-caption{font-size:9px}.topup-card{border-radius:16px;padding:23px 20px}.topup-amount strong{font-size:44px}.topup-heading .tag{font-size:9px}.topup-detail-grid{gap:9px}.topup-detail-grid small{font-size:9px}.topup-detail-grid strong{font-size:14px}.chart-heading{align-items:flex-start;flex-direction:column;gap:8px}.chart-panel{padding:20px 16px 14px}.legend{font-size:9px;gap:15px}.chart-frame{margin-top:12px}.chart-foot{font-size:9px}.comparison-panel{padding:20px 16px}.comparison-grid{grid-template-columns:1fr;gap:9px}.comparison-card{display:grid;grid-template-columns:1fr 1fr;column-gap:20px;padding:13px 15px;align-items:center}.comparison-card label{grid-column:1;margin:0 0 3px}.comparison-card input{grid-column:1;font-size:13px;padding:7px}.comparison-card .compare-output{grid-column:2;grid-row:1/span 3}.comparison-card strong{font-size:25px;margin:0}.comparison-card .history{grid-column:1;margin-top:4px}.comparison-card .compare-badge{float:none;margin-left:6px}.detail-panel{padding:0}.detail-panel summary{padding:18px 20px}.detail-body{padding:16px}.result-bottom{flex-wrap:wrap;gap:12px}.footer{margin-top:28px;display:block;padding:22px 20px}.footer-brand{display:block;margin-top:16px}.bank-check .bank-labels{gap:8px;font-size:10px}.privacy{font-size:10px}.placeholder{padding:48px 25px}dialog{padding:22px}.topup-input{display:block}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}@media print{.input-stack,.header-right,.intro-note,.result-bottom,.footer-brand,.comparison-card input,.skip,dialog,.toast{display:none!important}.workspace{display:block}.panel,.topup-card{break-inside:avoid;box-shadow:none}.topup-card{background:#eff4e9;color:#173f32}.topup-card *{color:#173f32!important}main{padding:10px}.footer{padding:10px}.results details{display:block}.result-stack{gap:12px}}
+.github-link{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:7px 11px;border:1px solid #cedac8;border-radius:9px;background:#fff;color:var(--green);font-size:12px;font-weight:650;text-decoration:none;white-space:nowrap}.github-link:hover{background:var(--soft)}.github-link svg{width:17px;height:17px;fill:currentColor;flex-shrink:0}@media(max-width:600px){.github-link{padding:8px;min-width:36px}.github-link .github-label{display:none}}@media(max-width:360px){.brand-en{display:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#calculator">跳至試算設定</a>
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"><defs>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 17l5-5 4 3 7-9M15 6h5v5M4 5v15h16"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-13 5h3m3 0h2"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-8 9-8 9s-8-4-8-9V6zM8 12l3 3 5-6"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/></symbol>
+</defs></svg>
+<header class="site-header"><div class="header-inner"><a class="brand" href="#" aria-label="存準 BalanceTarget 首頁"><span class="brand-icon"><svg class="icon"><use href="#i-chart"/></svg></span><span class="brand-name">存準<span class="brand-en">BalanceTarget</span></span></a><div class="header-right"><span class="local-label"><i class="local-dot"></i>資料只在你的瀏覽器</span><button class="text-button" id="show-guide"><svg class="icon"><use href="#i-info"/></svg>計算說明</button><a class="github-link" id="github-link" href="https://github.com/lokey0905/balance-target" target="_blank" rel="noopener noreferrer" aria-label="開啟 GitHub 儲存庫（新分頁）" title="GitHub · lokey0905/balance-target"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.43.11-2.98 0 0 .95-.3 3.1 1.15a10.8 10.8 0 0 1 5.62 0c2.15-1.46 3.1-1.15 3.1-1.15.61 1.55.23 2.7.11 2.98.72.79 1.16 1.79 1.16 3.02 0 4.32-2.63 5.28-5.14 5.56.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.78.54A11.25 11.25 0 0 0 12 .75Z"/></svg><span class="github-label">GitHub</span></a></div></div></header>
+<main>
+<section class="intro"><div><div class="eyebrow">A LITTLE PLANNING, A BETTER BALANCE.</div><h1>平均資產門檻試算器</h1><p>扣繳之後，還需要補存多少？把金額與時間，一起算清楚。</p></div><div class="intro-note"><svg class="icon"><use href="#i-spark"/></svg>剛剛好的存款，有依據的安排。</div></section>
+<div class="workspace">
+<form id="calculator" class="input-stack" novalidate>
+<section class="panel settings-panel"><div class="panel-header"><h2 class="section-title"><span class="section-number">01</span>試算設定</h2><span class="tag" id="sample-tag">虛構範例</span></div>
+<div class="mode-tabs" role="group" aria-label="使用模式"><button type="button" class="mode-tab" data-mode="unicard" aria-pressed="true">Unicard 存款試算</button><button type="button" class="mode-tab" data-mode="custom" aria-pressed="false">自訂平均資產</button></div>
+<div class="form-grid"><div class="field"><label for="check-month">目標檢核月份</label><input id="check-month" type="month" value="2026-11" min="1901-01" max="9999-12" required></div><div class="field"><label for="month-count">回溯採計月數</label><select id="month-count" disabled></select><div class="quick-buttons" id="month-shortcuts" hidden><button type="button" class="quick" data-months="1">1 個月</button><button type="button" class="quick" data-months="3">3 個月</button><button type="button" class="quick" data-months="6">6 個月</button><button type="button" class="quick" data-months="12">12 個月</button></div></div></div>
+<div class="period-display"><svg class="icon"><use href="#i-calendar"/></svg><div><strong id="period-label">2026/10/01 — 2026/10/31</strong><span id="period-days">共 31 天，依每日日終餘額計算</span></div></div>
+<div class="form-grid"><div class="field"><label for="target">目標平均資產</label><div class="money-input"><input id="target" type="number" min="1" max="1000000000000" step="1" value="300000" disabled required><span>元</span></div><div class="quick-buttons" id="target-shortcuts" hidden><button type="button" class="quick" data-target="300000">30 萬</button><button type="button" class="quick" data-target="500000">50 萬</button><button type="button" class="quick" data-target="3000000">300 萬</button></div></div><div class="field"><label for="initial">期初資產</label><div class="money-input"><input id="initial" type="number" min="0" max="1000000000000" step="1" value="300000" required><span>元</span></div></div><p class="help span2">期初資產為採計首日、任何異動發生前的總額。</p>
+<div class="field span2" id="method-field" hidden><label for="method">計算方式</label><select id="method"><option value="daily">按日平均（依實際天數加權）</option><option value="snapshot">每月指定日餘額平均</option></select></div><div class="span2" id="snapshot-block" hidden><p class="help" style="margin-bottom:10px">每月選擇一個採計日，預設月底。此模型不適用於玉山存款月平均認定。</p><div class="snapshot-fields" id="snapshot-fields"></div></div></div>
+<div class="field card-input" id="card-field"><label for="card-spend">採計月份刷卡金額<span class="optional">選填</span></label><div class="money-input"><input id="card-spend" type="number" min="0" max="1000000000000" step="1" value="30000" placeholder="未提供資料"><span>元</span></div><small>填寫銀行認列的刷卡金額，與帳戶實際扣繳金額分開。</small></div><p class="unicard-note" id="unicard-note">Unicard 情境固定採計前 1 個月、存款平均 30 萬元及刷卡 3 萬元數值門檻。</p>
+</section>
+<section class="panel records-panel"><div class="panel-header"><h2 class="section-title"><span class="section-number">02</span>資產異動</h2><span class="tag" id="record-count">1 筆紀錄</span></div><div class="records" id="records"></div><button type="button" class="add-button" id="add-record"><svg class="icon" style="width:14px;height:14px"><use href="#i-plus"/></svg>新增一筆異動</button><p class="help records-help">同日紀錄合併計算；同一試算範圍內的帳戶互轉，不必重複登錄。</p></section>
+<section class="panel action-panel"><div class="panel-header"><h2 class="section-title"><span class="section-number">03</span>規劃補存</h2></div><div class="field"><label for="topup-date">預計補存日期</label><input id="topup-date" type="date" value="2026-10-20" required><small>追加金額自生效日起保留至期末，補存當天也計入。</small></div><button type="submit" class="button-primary calculate">開始試算<svg class="icon"><use href="#i-arrow"/></svg></button><div class="example-actions"><button type="button" class="text-button" data-example="single">單月範例</button><span class="help">／</span><button type="button" class="text-button" data-example="triple">三個月範例</button><button type="button" class="text-button" id="reset">清空資料</button></div><p class="privacy"><svg class="icon"><use href="#i-shield"/></svg>免登入、不傳送、不自動保存。重新整理將回到虛構範例，請先複製需要的摘要。</p></section>
+</form>
+<section class="results" id="results" aria-label="試算結果">
+<div id="errors" class="errors" role="alert" hidden></div>
+<div id="result-placeholder" class="placeholder" hidden><div class="brand-icon"><svg class="icon"><use href="#i-chart"/></svg></div><h2 id="placeholder-title">資料已修改，請重新試算</h2><p id="placeholder-copy">確認左側的設定與異動紀錄，看看新的平均與補存金額。</p><button class="button-primary" id="recalculate">更新試算<svg class="icon"><use href="#i-arrow"/></svg></button></div>
+<div class="result-stack" id="result-content">
+<section class="panel summary-card"><div class="result-header"><h2 class="section-title" id="average-label">預估平均資產</h2><span class="status-pill" id="average-status">距離目標還差一點</span></div><div class="metrics"><div class="metric"><small>目前紀錄的期間平均</small><strong class="num" id="average-value">278,709.68</strong><p id="summary-period">2026/10/01 — 10/31 · 31 天</p></div><div class="metric"><small>目標平均</small><strong class="num" id="target-value">300,000</strong><p>新臺幣元</p></div><div class="metric difference"><small id="gap-label">平均差額</small><strong class="num" id="gap-value">−21,290.32</strong><p>平均與目標的差距</p></div></div><div class="progress-track" role="progressbar" aria-label="平均資產達成率" aria-valuemin="0" aria-valuemax="100" id="progress"><div class="progress-fill" id="progress-fill"></div></div><div class="progress-label"><span>目標達成率</span><span id="achievement">92.90%</span></div><p class="projection-note" id="projection-note"></p><div class="bank-check" id="bank-check"><svg class="icon"><use href="#i-shield"/></svg><div><div class="bank-labels"><span id="deposit-check"></span><span id="spending-check"></span></div><p class="bank-conclusion" id="bank-conclusion"></p></div></div></section>
+<section class="topup-card" aria-label="最低補存方案"><div class="topup-heading"><h2><svg class="icon" style="width:16px;height:16px"><use href="#i-spark"/></svg><span id="topup-heading">還需要追加存入</span></h2><span class="tag" id="topup-count">可計入 12 天</span></div><div class="topup-amount"><small>NT$</small><strong class="num" id="topup-amount">55,000</strong></div><p class="topup-date" id="topup-description"></p><div class="topup-detail-grid"><div><small>補存前的日終資產</small><strong class="num" id="before-value"></strong></div><div><small>補存後的日終資產</small><strong class="num" id="after-value"></strong></div><div><small>補存後預估平均</small><strong class="num" id="after-average"></strong></div></div><p class="topup-footnote" id="topup-footnote"></p></section>
+<section class="panel chart-panel"><div class="chart-heading"><h2>讓資產的變化，一目了然</h2><div class="legend"><span><i></i>原有紀錄</span><span><i class="planned"></i>補存方案</span><span><i class="target"></i>目標</span></div></div><div class="chart-frame" id="chart"></div><p class="chart-foot"><span>每日日終資產 · 新臺幣元</span><a href="#detail-panel" id="open-details">查看文字明細 ↗</a></p></section>
+<section class="panel comparison-panel"><div class="panel-header"><h2 class="section-title">早一點補存，會差多少？</h2><span class="tag">獨立方案比較</span></div><p class="help">選擇最多 3 個日期；每個方案各自計算，不會同時加入紀錄。清空日期可移除方案。</p><div class="comparison-grid" id="comparison-grid"></div></section>
+<details class="panel detail-panel" id="detail-panel"><summary><span>計算明細與每月平均</span><svg class="icon"><use href="#i-chevron"/></svg></summary><div class="detail-body"><h3>各月份的按日平均</h3><div class="table-scroll"><table><thead><tr><th scope="col">採計月份</th><th scope="col">天數</th><th scope="col">月平均資產</th><th scope="col">單月是否達標</th></tr></thead><tbody id="month-rows"></tbody></table></div><p class="table-caption">整段期間平均達標，不代表每一個月都達標。此表為各月按日平均。</p><div id="snapshot-detail" hidden><h3>每月指定日採計明細</h3><div class="table-scroll"><table><thead><tr><th scope="col">採計日期</th><th scope="col">日終資產</th></tr></thead><tbody id="snapshot-rows"></tbody></table></div></div><h3>原有紀錄的連續餘額區間</h3><div class="table-scroll"><table><thead><tr><th scope="col">日期區間</th><th scope="col">日終資產</th><th scope="col">天數</th><th scope="col">金額 × 天數</th></tr></thead><tbody id="segment-rows"></tbody></table></div><p class="table-caption">所有日期均含起訖當日；同一天的異動合併為淨變動後計算。</p><div class="formula" id="formula"></div></div></details>
+<div class="result-bottom"><span>每個日期都有重量，每一筆存款都有依據。</span><button class="button-secondary" id="copy-summary"><svg class="icon" style="width:14px;height:14px"><use href="#i-copy"/></svg>複製試算摘要</button></div>
+</div>
+</section>
+</div>
+</main>
+<footer class="footer"><p>本工具依使用者輸入與所選模型進行試算，不代表銀行正式資格認定。實際採計方式、資產範圍與認列條件，請以相關機構規定為準。<br>扣繳記錄於實際扣款日；補存只能影響生效日及之後的資產，不能改變已結束月份的平均。不自動計入利息、投資報酬、手續費或匯率變化。</p><span class="footer-brand">BALANCETARGET · SPEC 1.1</span></footer>
+<dialog id="guide-dialog" aria-labelledby="guide-title"><button class="icon-button dialog-close" aria-label="關閉計算說明" data-close="guide-dialog">×</button><h2 id="guide-title">把時間，算進你的存款。</h2><p>「目前餘額回到門檻」不代表「整段期間平均已達標」。越晚補存，能計入的時間越短，需要追加的金額也可能越高。</p><h3 class="modal-subhead">按日平均</h3><div class="formula">平均資產 ＝ 每日日終資產總和 ÷ 實際總天數<br>最低追加 ＝ ⌈（目標 × 總天數 − 原有總和）÷ 補存可計入天數⌉</div><p>不足額才需要追加；結果向上取整數元。多月依實際天數加權，包含週末、假日與閏日。</p><h3 class="modal-subhead">每月指定日平均</h3><p>自訂模式可選每月一個採計日（預設月底）。以指定日餘額加總除以月數；補存反推則依可影響的採計次數計算。</p><h3 class="modal-subhead">Unicard 情境的範圍</h3><p>依規格提供前一個月存款平均 30 萬元、刷卡 3 萬元的數值檢核；僅模擬新臺幣存款，不涵蓋銀行完整的投資、保險等資產認列，也不執行 UP 選訂閱或判斷消費回饋。</p><p class="help">數值門檻與存款算法於 2026/10/16 核對：<a href="https://www.esunbank.com/zh-tw/personal/credit-card/intro/bank-card/unicard" target="_blank" rel="noopener noreferrer">玉山 Unicard 官方說明 ↗</a>、<a href="https://www.esunbank.com/zh-tw/about/faq/content?q=credit_card%2Fwallet%2F166" target="_blank" rel="noopener noreferrer">雙門檻 FAQ ↗</a>。</p><p>「補存前」是當日原有紀錄都套用後的日終資產。已登錄的存入不會重複計算。歷史日期僅供回顧假設。</p><div class="dialog-actions"><button class="button-primary" data-close="guide-dialog">了解，開始規劃</button></div></dialog>
+<dialog id="confirm-dialog" aria-labelledby="confirm-title"><h2 id="confirm-title">載入範例？</h2><p id="confirm-copy">目前輸入將被替換，請先複製需要的試算摘要。</p><div class="dialog-actions"><button class="button-secondary" id="confirm-cancel">保留目前資料</button><button class="button-primary" id="confirm-ok">確認載入</button></div></dialog>
+<dialog id="copy-dialog" aria-labelledby="copy-title"><h2 id="copy-title">手動複製試算摘要</h2><p>瀏覽器未允許自動複製，請選取以下文字後複製。</p><label class="field-label" for="summary-text">試算摘要</label><textarea class="summary-text" id="summary-text" readonly></textarea><div class="dialog-actions"><button class="button-secondary" id="select-summary">全選文字</button><button class="button-primary" data-close="copy-dialog">完成</button></div></dialog>
+<div class="toast" id="toast" role="status" hidden></div>
+<script id="calculation-engine">
+/* BalanceTarget v1.1: all calendar arithmetic uses UTC; amounts are whole TWD. */
+(function (root) {
+  'use strict';
+
+  const DAY = 86400000;
+  const MAX_AMOUNT = 1000000000000;
+  const SIGNS = Object.freeze({ deposit: 1, withdrawal: -1, card: -1, increase: 1, decrease: -1 });
+
+  function fail(message) { throw new Error(message); }
+
+  function amount(value, label, positive) {
+    if (typeof value !== 'number' || !Number.isSafeInteger(value) || value > MAX_AMOUNT || value < (positive ? 1 : 0)) {
+      fail(label + '請輸入' + (positive ? '大於 0' : '大於或等於 0') + '且不超過 1 兆的整數金額。');
+    }
+    return value;
+  }
+
+  function safe(value) {
+    if (!Number.isSafeInteger(value)) fail('金額累計超出可精確計算的範圍，請降低金額或減少異動。');
+    return value;
+  }
+
+  function dateValue(value, label) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) fail(label + '請輸入有效日期。');
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(0);
+    date.setUTCHours(0, 0, 0, 0);
+    date.setUTCFullYear(year, month - 1, day);
+    if (year < 1 || date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) {
+      fail(label + '請輸入真實存在的日期。');
+    }
+    return date.getTime();
+  }
+
+  function iso(time) { return new Date(time).toISOString().slice(0, 10); }
+
+  function period(checkMonth, months) {
+    if (typeof checkMonth !== 'string' || !/^\d{4}-\d{2}$/.test(checkMonth)) fail('檢核月份請輸入有效年月。');
+    const checkTime = dateValue(checkMonth + '-01', '檢核月份');
+    if (!Number.isInteger(months) || months < 1 || months > 12) fail('計算期間請選擇 1 到 12 個月。');
+    const startDate = new Date(checkTime);
+    startDate.setUTCMonth(startDate.getUTCMonth() - months);
+    if (startDate.getUTCFullYear() < 1) fail('計算期間超出支援的日期範圍。');
+    const start = startDate.getTime();
+    const end = checkTime - DAY;
+    const monthKeys = [];
+    for (let i = 0; i < months; i += 1) {
+      const date = new Date(start);
+      date.setUTCMonth(date.getUTCMonth() + i);
+      monthKeys.push(iso(date.getTime()).slice(0, 7));
+    }
+    return { start: iso(start), end: iso(end), days: Math.round((end - start) / DAY) + 1, monthKeys };
+  }
+
+  function calculate(input) {
+    if (!input || typeof input !== 'object' || Array.isArray(input)) fail('請先填寫計算設定。');
+    if (input.mode !== 'unicard' && input.mode !== 'custom') fail('請選擇有效的計算模式。');
+    const isUnicard = input.mode === 'unicard';
+    const config = {
+      mode: input.mode,
+      checkMonth: input.checkMonth,
+      months: isUnicard ? 1 : input.months,
+      target: isUnicard ? 300000 : amount(input.target, '目標平均餘額', true),
+      initial: amount(input.initial, '期初餘額', false),
+      method: isUnicard ? 'daily' : input.method,
+      snapshotDates: {},
+      transactions: [],
+      cardSpend: input.cardSpend === '' || input.cardSpend === undefined ? '' : amount(input.cardSpend, '信用卡消費額', false)
+    };
+    if (config.method !== 'daily' && config.method !== 'snapshot') fail('請選擇每日平均或指定日期平均。');
+    const selectedPeriod = period(config.checkMonth, config.months);
+    const startTime = dateValue(selectedPeriod.start, '期間起日');
+    const endTime = dateValue(selectedPeriod.end, '期間迄日');
+    const sourceTransactions = input.transactions === undefined ? [] : input.transactions;
+    if (!Array.isArray(sourceTransactions)) fail('資金異動格式不正確。');
+    const byDate = new Map();
+    sourceTransactions.forEach(function (transaction, index) {
+      const label = '第 ' + (index + 1) + ' 筆異動：';
+      if (!transaction || typeof transaction !== 'object') fail(label + '資料格式不正確。');
+      const time = dateValue(transaction.date, label + '日期');
+      if (time < startTime || time > endTime) fail(label + '日期必須在 ' + selectedPeriod.start + ' 至 ' + selectedPeriod.end + ' 內。');
+      if (!Object.prototype.hasOwnProperty.call(SIGNS, transaction.type)) fail(label + '請選擇有效的異動類型。');
+      const event = {
+        id: transaction.id === undefined ? String(index + 1) : String(transaction.id),
+        date: transaction.date,
+        type: transaction.type,
+        amount: amount(transaction.amount, label + '金額', true),
+        note: transaction.note === undefined ? '' : String(transaction.note)
+      };
+      config.transactions.push(event);
+      if (!byDate.has(event.date)) byDate.set(event.date, []);
+      byDate.get(event.date).push(event);
+    });
+
+    let balance = config.initial;
+    const daily = [];
+    const segments = [];
+    const monthStats = new Map();
+    for (let time = startTime; time <= endTime; time += DAY) {
+      const date = iso(time);
+      const month = date.slice(0, 7);
+      const events = byDate.get(date) || [];
+      // Validate after aggregating a complete day, so row ordering cannot change the outcome.
+      const delta = events.reduce(function (sum, event) { return safe(sum + SIGNS[event.type] * event.amount); }, 0);
+      balance = safe(balance + delta);
+      if (balance < 0) fail(date + ' 的日終餘額為負數，請調整期初餘額或當日異動。');
+      daily.push({ date, balance, delta, events });
+      if (!monthStats.has(month)) monthStats.set(month, { month, days: 0, sum: 0, average: 0, snapshotDate: '', snapshotBalance: 0 });
+      const stats = monthStats.get(month);
+      stats.days += 1;
+      stats.sum = safe(stats.sum + balance);
+      const lastSegment = segments[segments.length - 1];
+      if (lastSegment && lastSegment.balance === balance) {
+        lastSegment.end = date;
+        lastSegment.days += 1;
+        lastSegment.contribution = safe(lastSegment.contribution + balance);
+      } else {
+        segments.push({ start: date, end: date, balance, days: 1, contribution: balance });
+      }
+    }
+
+    if (input.snapshotDates !== undefined && (!input.snapshotDates || typeof input.snapshotDates !== 'object' || Array.isArray(input.snapshotDates))) {
+      fail('指定日期設定格式不正確。');
+    }
+    const byDay = new Map(daily.map(function (day) { return [day.date, day]; }));
+    const months = Array.from(monthStats.values());
+    months.forEach(function (stats) {
+      stats.average = stats.sum / stats.days;
+      const defaultDate = stats.month + '-' + String(stats.days).padStart(2, '0');
+      const chosen = input.snapshotDates && input.snapshotDates[stats.month];
+      const selected = config.method === 'snapshot' && chosen !== undefined && chosen !== '' ? chosen : defaultDate;
+      dateValue(selected, stats.month + ' 指定日期');
+      if (selected.slice(0, 7) !== stats.month || !byDay.has(selected)) fail(stats.month + ' 的指定日期必須位於該月份內。');
+      config.snapshotDates[stats.month] = selected;
+      stats.snapshotDate = selected;
+      stats.snapshotBalance = byDay.get(selected).balance;
+    });
+    const sampleDates = config.method === 'daily' ? daily.map(function (day) { return day.date; }) : months.map(function (month) { return month.snapshotDate; });
+    const sampleCount = sampleDates.length;
+    const sum = sampleDates.reduce(function (total, date) { return safe(total + byDay.get(date).balance); }, 0);
+    const average = sum / sampleCount;
+    const required = safe(config.target * sampleCount);
+    return {
+      config,
+      period: selectedPeriod,
+      daily,
+      months,
+      segments,
+      sampleDates,
+      sampleCount,
+      sum,
+      average,
+      met: sum >= required,
+      gap: Math.max(0, config.target - average),
+      achievement: average / config.target * 100
+    };
+  }
+
+  function plan(result, date) {
+    const time = dateValue(date, '補款日期');
+    if (!result || !result.period || !Array.isArray(result.daily) || !Array.isArray(result.sampleDates)) fail('請先完成平均餘額計算。');
+    if (time < dateValue(result.period.start, '期間起日')) fail('補款日期不可早於計算期間起日 ' + result.period.start + '。');
+    const eligibleCount = result.sampleDates.filter(function (sampleDate) { return sampleDate >= date; }).length;
+    const day = result.daily.find(function (entry) { return entry.date === date; });
+    const before = day ? day.balance : result.daily[result.daily.length - 1].balance;
+    const deficit = Math.max(0, safe(result.config.target * result.sampleCount) - result.sum);
+    const possible = deficit === 0 || eligibleCount > 0;
+    // Integer division ensures ceiling and qualification never rely on displayed rounding.
+    const addition = !possible ? null : deficit === 0 ? 0 : Number((BigInt(deficit) + BigInt(eligibleCount) - 1n) / BigInt(eligibleCount));
+    const updatedSum = addition === null ? null : safe(result.sum + safe(addition * eligibleCount));
+    return {
+      date,
+      eligibleCount,
+      amount: addition,
+      before,
+      after: addition === null ? null : safe(before + addition),
+      average: updatedSum === null ? null : updatedSum / result.sampleCount,
+      possible,
+      met: updatedSum !== null && updatedSum >= result.config.target * result.sampleCount
+    };
+  }
+
+  root.BalanceEngine = Object.freeze({ period, calculate, plan });
+})(globalThis);
+
+</script>
+<script id="application">
+'use strict';
+const $ = (id) => document.getElementById(id);
+const money = (n, decimals = 0) => n === null || !Number.isFinite(n) ? '—' : new Intl.NumberFormat('zh-TW', {minimumFractionDigits: decimals, maximumFractionDigits: decimals}).format(n);
+const escaped = (value) => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const slash = (date) => date.replaceAll('-', '/');
+const shortDate = (date) => `${Number(date.slice(5, 7))}/${Number(date.slice(8, 10))}`;
+const today = () => new Intl.DateTimeFormat('sv-SE', {timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+let mode = 'unicard', records = [], serial = 0, lastResult = null, lastPlan = null, dirty = false, pendingAction = null;
+let compareDates = ['2026-10-10','2026-10-20','2026-10-25'];
+let rememberedSnapshots = {};
+const types = {deposit:'存入',withdrawal:'轉出',card:'信用卡扣繳',increase:'其他增加',decrease:'其他減少'};
+
+function currentPeriod() {
+  try { return BalanceEngine.period($('check-month').value, mode === 'unicard' ? 1 : Number($('month-count').value)); }
+  catch { return null; }
+}
+function getConfig() {
+  const snapshots = {};
+  document.querySelectorAll('[data-snapshot]').forEach(input => { if($('method').value === 'snapshot' && !input.value) throw new Error(`${input.dataset.snapshot} 請選擇有效的採計日期。`); snapshots[input.dataset.snapshot] = input.value; });
+  const numeric = value => value === '' ? NaN : Number(value);
+  return {mode, checkMonth:$('check-month').value, months:Number($('month-count').value), target:numeric($('target').value), initial:numeric($('initial').value), method:$('method').value, snapshotDates:snapshots, transactions:records.map(r => ({...r,amount:numeric(r.amount)})), cardSpend:mode !== 'unicard' || $('card-spend').value === '' ? '' : numeric($('card-spend').value)};
+}
+function markDirty() {
+  dirty = true;
+  $('sample-tag').textContent = '自訂輸入';
+  $('result-content').hidden = true;
+  $('result-placeholder').hidden = false;
+  $('placeholder-title').textContent = '資料已修改，請重新試算';
+  $('placeholder-copy').textContent = '確認設定與異動紀錄，再更新平均資產與補存方案。';
+  $('errors').hidden = true;
+}
+function updateMode(nextMode) {
+  mode = nextMode;
+  const isBank = mode === 'unicard';
+  document.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+  $('month-count').disabled = isBank;
+  $('target').disabled = isBank;
+  ['month-shortcuts','target-shortcuts','method-field'].forEach(id => $(id).hidden = isBank);
+  $('card-field').hidden = !isBank;
+  $('unicard-note').hidden = !isBank;
+  if (isBank) { $('month-count').value = '1'; $('target').value = '300000'; $('method').value = 'daily'; }
+  updatePeriod();
+}
+function updatePeriod() {
+  const period = currentPeriod();
+  document.querySelectorAll('[data-snapshot]').forEach(input => { rememberedSnapshots[input.dataset.snapshot] = input.value; });
+  if (!period) { $('period-label').textContent = '請輸入有效的檢核月份'; $('period-days').textContent = '採計期間將自動產生'; $('snapshot-fields').replaceChildren(); return; }
+  $('period-label').textContent = `${slash(period.start)} — ${slash(period.end)}`;
+  $('period-days').textContent = `共 ${period.days} 天，${$('method').value === 'daily' ? '依每日日終餘額計算' : '依每月指定日餘額計算'}`;
+  $('topup-date').min = period.start;
+  const isSnapshot = mode === 'custom' && $('method').value === 'snapshot';
+  $('snapshot-block').hidden = !isSnapshot;
+  $('snapshot-fields').innerHTML = period.monthKeys.map(month => {
+    const end = monthEnd(month), value = Object.hasOwn(rememberedSnapshots, month) ? rememberedSnapshots[month] : end;
+    return `<div class="field"><label for="snapshot-${month}">${month.replace('-', ' 年 ')} 月採計日</label><input id="snapshot-${month}" type="date" data-snapshot="${month}" min="${month}-01" max="${end}" value="${escaped(value)}" required></div>`;
+  }).join('');
+  flagRecords();
+}
+function monthEnd(month) {
+  const [y,m] = month.split('-').map(Number);
+  const date = new Date(0); date.setUTCFullYear(y,m,0); date.setUTCHours(0,0,0,0);
+  return date.toISOString().slice(0,10);
+}
+function renderRecords() {
+  $('record-count').textContent = `${records.length} 筆紀錄`;
+  $('records').innerHTML = records.length ? records.map((r, index) => `<div class="record" data-record="${r.id}"><div class="record-top"><span class="record-title"><i class="record-dot"></i>異動 ${String(index+1).padStart(2,'0')}</span><button type="button" class="icon-button" data-delete="${r.id}" aria-label="刪除第 ${index+1} 筆異動"><svg class="icon" style="width:14px;height:14px"><use href="#i-trash"/></svg></button></div><div class="record-grid"><div class="field"><label for="date-${r.id}">生效日期</label><input id="date-${r.id}" type="date" data-key="date" value="${escaped(r.date)}" required></div><div class="field"><label for="type-${r.id}">異動類型</label><select id="type-${r.id}" data-key="type">${Object.entries(types).map(([key,label]) => `<option value="${key}"${r.type===key?' selected':''}>${label}</option>`).join('')}</select></div><div class="field span2"><label for="amount-${r.id}">異動金額（新臺幣元）</label><input id="amount-${r.id}" type="number" min="1" max="1000000000000" step="1" data-key="amount" value="${escaped(r.amount)}" required></div><div class="field span2"><label class="optional" for="note-${r.id}">備註（選填）</label><input id="note-${r.id}" type="text" data-key="note" value="${escaped(r.note)}" placeholder="例如：上期信用卡費" maxlength="120"></div></div><p class="record-error" hidden></p></div>`).join('') : '<p class="empty-records">尚無異動。資產將維持期初金額。<br>新增扣繳或存入，看看平均如何變化。</p>';
+  flagRecords();
+}
+function flagRecords() {
+  const period = currentPeriod();
+  document.querySelectorAll('[data-record]').forEach(row => {
+    const record = records.find(r => r.id === row.dataset.record);
+    if (!record) return;
+    const outside = Boolean(period && record.date && (record.date < period.start || record.date > period.end));
+    const message = row.querySelector('.record-error');
+    row.classList.toggle('outside', outside);
+    message.hidden = !outside;
+    message.textContent = outside ? '待調整：此紀錄不在目前採計期間，資料已保留。' : '';
+    row.querySelector('[data-key=date]').setAttribute('aria-invalid', String(outside));
+  });
+}
+function runCalculation() {
+  try {
+    const result = BalanceEngine.calculate(getConfig());
+    const plan = BalanceEngine.plan(result, $('topup-date').value);
+    lastResult = result; lastPlan = plan; dirty = false;
+    $('errors').hidden = true; $('result-placeholder').hidden = true; $('result-content').hidden = false;
+    renderResult(result, plan);
+    return true;
+  } catch(error) {
+    dirty = true; lastResult = null; lastPlan = null;
+    $('result-content').hidden = true; $('result-placeholder').hidden = false;
+    $('placeholder-title').textContent = '先調整資料，就能開始試算';
+    $('placeholder-copy').textContent = '請依上方提示修正，原有輸入都會保留。';
+    $('errors').textContent = error.message || '請確認輸入資料。'; $('errors').hidden = false;
+    flagRecords();
+    return false;
+  }
+}
+function renderResult(result, plan) {
+  const {period, config} = result, historical = period.end < today(), projected = period.end >= today();
+  $('average-label').textContent = projected ? '預估平均資產' : '歷史平均資產試算';
+  $('average-status').textContent = result.met ? '已達數值門檻' : '尚未達到目標';
+  $('average-status').className = `status-pill${result.met ? ' good' : ''}`;
+  $('average-value').textContent = money(result.average, 2);
+  $('target-value').textContent = money(Number(config.target));
+  const diff = result.average - Number(config.target);
+  $('gap-value').textContent = `${diff < 0 ? '−' : diff > 0 ? '+' : ''}${money(Math.abs(diff), 2)}`;
+  $('gap-value').style.color = result.met ? 'var(--green)' : '';
+  $('summary-period').textContent = `${slash(period.start)} — ${shortDate(period.end)} · ${period.days} 天`;
+  $('progress-fill').style.width = `${Math.min(100, Math.max(0, result.achievement))}%`;
+  $('progress').setAttribute('aria-valuenow', String(Math.min(100, result.achievement)));
+  $('progress').setAttribute('aria-valuetext', `達成率 ${money(result.achievement,2)}%`);
+  $('achievement').textContent = `${money(result.achievement, 2)}%`;
+  $('projection-note').textContent = projected ? '未輸入後續異動的日期，假設資產維持不變；本結果為預估。' : '此採計期間已結束。補存方案僅供歷史假設，無法現在補存修復過去平均。';
+  $('bank-check').hidden = config.mode !== 'unicard';
+  const missingSpend = config.cardSpend === '' || config.cardSpend === null || config.cardSpend === undefined;
+  const spendingMet = !missingSpend && Number(config.cardSpend) >= 30000;
+  $('deposit-check').textContent = `存款平均：${result.met ? '達標 ✓' : '未達標'}`;
+  $('spending-check').textContent = `刷卡金額：${missingSpend ? '未提供資料' : spendingMet ? '達標 ✓' : '未達標'}`;
+  $('bank-conclusion').textContent = result.met && spendingMet ? '依目前輸入，預估達到兩項數值門檻；實際資格仍以銀行認定為準。' : missingSpend ? '刷卡資料尚未提供，無法判斷雙門檻；存款結果僅依原有紀錄。' : '兩項數值門檻尚未同時達成；補存方案不會自動加入原有紀錄。';
+  $('topup-heading').textContent = historical || plan.date < today() ? '歷史假設的最低追加金額' : plan.amount === 0 ? '目前不需要追加存入' : '還需要追加存入';
+  const unit = config.method === 'snapshot' ? '次採計' : '天';
+  $('topup-count').textContent = `可計入 ${plan.eligibleCount} ${unit}`;
+  $('topup-amount').textContent = plan.possible ? money(plan.amount) : '無法達標';
+  $('topup-amount').style.fontSize = plan.possible ? '' : '34px';
+  $('topup-description').textContent = `${slash(plan.date)} 生效${plan.date > period.end ? ' · 已超出採計期末' : `，持有至 ${slash(period.end)}`}${plan.date < today() ? ' · 歷史假設' : ''}`;
+  $('before-value').textContent = money(plan.before);
+  $('after-value').textContent = plan.possible ? money(plan.after) : '—';
+  $('after-average').textContent = plan.possible ? money(plan.average, 2) : '—';
+  $('topup-footnote').textContent = !plan.possible ? '此日期沒有可影響的採計日，無法透過本次補存使期間平均達標。' : historical ? '採計期間已結束，以上僅為當時補存的假設結果。' : plan.amount === 0 ? '依原有紀錄已達標；後續若新增扣款，請再次試算。' : '以其他紀錄維持不變計算。最低追加金額向上取整數元。';
+  renderChart(result, plan);
+  renderComparisons();
+  renderDetails(result);
+}
+function renderComparisons() {
+  if (!lastResult || dirty) return;
+  const plans = compareDates.map(date => { try { return date ? BalanceEngine.plan(lastResult,date) : null; } catch(error) { return {error:error.message}; } });
+  const possibleAmounts = plans.filter(p => p && !p.error && p.possible).map(p => p.amount);
+  const lowest = possibleAmounts.length ? Math.min(...possibleAmounts) : null;
+  if (!$('comparison-grid').children.length) {
+    $('comparison-grid').innerHTML = [0,1,2].map(index => `<article class="comparison-card"><label for="compare-${index}"></label><input id="compare-${index}" data-compare="${index}" type="date" aria-label="方案 ${String.fromCharCode(65+index)}補存日期"><div class="compare-output"></div><div class="history" hidden></div></article>`).join('');
+  }
+  plans.forEach((plan,index) => {
+    const best = plan && !plan.error && plan.possible && plan.amount === lowest;
+    const label = `方案 ${String.fromCharCode(65+index)}`;
+    const output = !plan ? '<strong>—</strong><p class="compare-meta">選擇日期開始比較</p>' : plan.error ? `<p class="compare-meta" style="color:var(--red)">${escaped(plan.error)}</p>` : `<strong class="num">${plan.possible?money(plan.amount):'無法達標'}</strong><p class="compare-meta">${plan.eligibleCount} ${lastResult.config.method==='snapshot'?'次可採計':'天可計入'} · 最低追加</p><div class="compare-average">補存後平均 ${money(plan.average,2)}</div>`;
+    const card = $('comparison-grid').children[index], input = card.querySelector('input');
+    card.className = `comparison-card${best?' recommended':''}`;
+    card.querySelector('label').innerHTML = label + (best?'<span class="compare-badge">較省資金</span>':'');
+    if(input.value !== compareDates[index]) input.value = compareDates[index];
+    card.querySelector('.compare-output').innerHTML = output;
+    const history = card.querySelector('.history');
+    history.hidden = !compareDates[index] || !(compareDates[index]<today() || lastResult.period.end<today());
+    history.textContent = '歷史假設 · 非現在可補存';
+  });
+}
+function renderDetails(result) {
+  $('month-rows').innerHTML = result.months.map(m => `<tr><td>${m.month.replace('-',' / ')}</td><td>${m.days}</td><td class="num">${money(m.average,2)}</td><td>${m.sum >= Number(result.config.target)*m.days ? '達標' : '未達標'}</td></tr>`).join('');
+  $('snapshot-detail').hidden = result.config.method !== 'snapshot';
+  $('snapshot-rows').innerHTML = result.months.map(m => `<tr><td>${slash(m.snapshotDate)}</td><td class="num">${money(m.snapshotBalance)}</td></tr>`).join('');
+  $('segment-rows').innerHTML = result.segments.map(s => `<tr><td>${slash(s.start)} — ${shortDate(s.end)}</td><td class="num">${money(s.balance)}</td><td>${s.days}</td><td class="num">${money(s.contribution)}</td></tr>`).join('');
+  $('formula').textContent = result.config.method === 'snapshot' ? `指定日平均：${money(result.sum)} ÷ ${result.sampleCount} 次 ＝ ${money(result.average,2)} 元。最低追加以剩餘可影響的採計次數計算。` : `按日平均：${money(result.sum)} 元・日 ÷ ${result.sampleCount} 天 ＝ ${money(result.average,2)} 元。最低追加以補存日至期末的天數計算。`;
+}
+function renderChart(result, plan) {
+  const width=700, height=240, pad={left:59,right:16,top:29,bottom:38}, plotW=width-pad.left-pad.right, plotH=height-pad.top-pad.bottom;
+  const daily=result.daily, target=Number(result.config.target), addition=plan.possible?plan.amount:0;
+  const planned = daily.map(d => d.balance + (d.date >= plan.date ? addition : 0));
+  let lower = Math.min(target,...daily.map(d=>d.balance),...planned), upper = Math.max(target,...daily.map(d=>d.balance),...planned);
+  const span = Math.max(upper-lower, Math.max(upper*.15,100)); lower=Math.max(0,lower-span*.3);upper+=span*.3;
+  const x=i=>pad.left+(i/daily.length)*plotW, y=v=>pad.top+(upper-v)/(upper-lower)*plotH;
+  const pathFor=values => values.map((value,i)=>`${i===0?'M':'H'}${x(i).toFixed(2)}${i===0?' '+y(value).toFixed(2):'V'+y(value).toFixed(2)}`).join('')+`H${x(daily.length).toFixed(2)}`;
+  const originalPath=pathFor(daily.map(d=>d.balance)), plannedPath=pathFor(planned);
+  const chartMoney=n=>Math.abs(n)>=10000?`${money(n/10000,n%10000===0?0:1)}萬`:money(n);
+  let content=`<title id="chart-title">採計期間每日日終資產變化</title><desc id="chart-desc">原有平均 ${money(result.average,2)} 元，目標 ${money(target)} 元。${plan.possible?`補存 ${money(plan.amount)} 元後平均 ${money(plan.average,2)} 元。`:''}詳細日期、資產與天數可在下方文字明細查看。</desc><defs><linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#97b17e" stop-opacity=".17"/><stop offset="100%" stop-color="#97b17e" stop-opacity=".01"/></linearGradient></defs>`;
+  for(let i=0;i<4;i++){const value=lower+(upper-lower)*i/3,cy=y(value);content+=`<line x1="${pad.left}" y1="${cy}" x2="${width-pad.right}" y2="${cy}" stroke="#e9eee3" stroke-dasharray="3 5"/><text x="${pad.left-10}" y="${cy+3}" text-anchor="end" font-size="10" fill="#8c9787">${chartMoney(value)}</text>`;}
+  content+=`<path d="${originalPath}L${x(daily.length)} ${height-pad.bottom}H${pad.left}Z" fill="url(#chart-fill)"/><line x1="${pad.left}" y1="${y(target)}" x2="${width-pad.right}" y2="${y(target)}" stroke="#baa985" stroke-dasharray="5 5"/><text x="${width-pad.right}" y="${Math.max(14,y(target)-7)}" text-anchor="end" font-size="9" fill="#a0906d">目標 ${chartMoney(target)}</text>`;
+  if(addition>0) content+=`<path d="${plannedPath}" fill="none" stroke="#a4b977" stroke-width="2" stroke-dasharray="5 4"/>`;
+  content+=`<path d="${originalPath}" fill="none" stroke="#4d745a" stroke-width="2.5" stroke-linejoin="round"/>`;
+  const events=daily.map((d,i)=>({d,i})).filter(({d})=>d.events.length);
+  events.forEach(({d,i},index)=>{const tx=x(i),ty=y(d.balance),label=d.events.length===1?types[d.events[0].type]:`${d.events.length} 筆異動`;content+=`<circle cx="${tx}" cy="${ty}" r="4" fill="#fff" stroke="#52765a" stroke-width="2"><title>${slash(d.date)} ${escaped(label)}，淨變動 ${money(d.delta)} 元，日終 ${money(d.balance)} 元</title></circle>`;if(events.length<=6){content+=`<text x="${Math.max(pad.left+18,Math.min(width-pad.right-26,tx))}" y="${Math.min(height-pad.bottom-8,ty+17+(index%2)*12)}" text-anchor="middle" font-size="9" fill="#77866c">${shortDate(d.date)} ${escaped(label)}</text>`;}});
+  if(plan.possible && addition>0 && plan.date<=result.period.end){const i=daily.findIndex(d=>d.date>=plan.date);content+=`<circle cx="${x(i)}" cy="${y(planned[i])}" r="4" fill="#a4b977" stroke="white" stroke-width="2"><title>${slash(plan.date)} 補存 ${money(addition)} 元</title></circle>`;}
+  const ticks=[0,Math.floor(daily.length/3),Math.floor(daily.length*2/3),daily.length-1];
+  [...new Set(ticks)].forEach(i=>{content+=`<text x="${i===daily.length-1?x(daily.length):x(i)}" y="${height-12}" text-anchor="${i===0?'start':i===daily.length-1?'end':'middle'}" font-size="10" fill="#899582">${shortDate(daily[i].date)}</text>`;});
+  $('chart').innerHTML=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="chart-title chart-desc">${content}</svg>`;
+}
+function summaryText() {
+  const r=lastResult,p=lastPlan;
+  const lines=['存準 BalanceTarget｜平均資產門檻試算器',`模式：${r.config.mode==='unicard'?'Unicard 存款試算':'自訂平均資產試算'}`,`採計期間：${slash(r.period.start)}～${slash(r.period.end)}（${r.period.days} 天）`,`計算模型：${r.config.method==='daily'?'按日平均':'每月指定日餘額平均'}`,`目標：NT$ ${money(Number(r.config.target))}`,`原有平均資產：NT$ ${money(r.average,2)}（${r.met?'達標':'未達標'}）`,`補存方案：${slash(p.date)}，最低追加 ${p.possible?'NT$ '+money(p.amount):'無法達標'}`,`補存前日終資產：NT$ ${money(p.before)}`,`補存後日終資產：NT$ ${money(p.after)}`,`補存後平均：NT$ ${money(p.average,2)}`];
+  if(r.config.mode==='unicard') lines.push(`採計月份刷卡金額：${r.config.cardSpend===''?'未提供資料':'NT$ '+money(Number(r.config.cardSpend))}`);
+  if(r.config.method==='snapshot') lines.push('指定採計日：'+r.months.map(m=>slash(m.snapshotDate)).join('、'));
+  lines.push('各月按日平均：'+r.months.map(m=>`${m.month}：${money(m.average,2)} 元`).join('；'));
+  const comparisons=compareDates.filter(Boolean).map(date=>{try{const plan=BalanceEngine.plan(r,date);return `${slash(date)}：${plan.possible?money(plan.amount)+' 元':'無法達標'}${date<today()?'（歷史假設）':''}`;}catch{return `${slash(date)}：日期無效`;}});
+  if(comparisons.length) lines.push('獨立比較方案（非同時補存）：'+comparisons.join('；'));
+  lines.push(r.period.end<today()?'期間已結束，補存方案僅供歷史假設，不能現在修復。':'未輸入後續異動的日期假設資產維持不變。');
+  if(p.date<today() && r.period.end>=today()) lines.push('所選補存日期已過，為歷史假設。');
+  lines.push('其他紀錄維持不變，追加金額自生效日起保留至期末。','本工具依輸入資料試算，不代表銀行正式資格認定。');
+  return lines.join('\n');
+}
+function showToast(text) { $('toast').textContent=text;$('toast').hidden=false;clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>$('toast').hidden=true,3500); }
+function askReplace(action,isReset) {
+  pendingAction=action;
+  $('confirm-title').textContent=isReset?'清空所有輸入？':'載入虛構範例？';
+  $('confirm-copy').textContent=isReset?'資產、刷卡金額與異動紀錄將清空，試算設定會重設。此操作無法復原。':'目前設定與異動將被範例替換。若要保留結果，請先取消並複製摘要。';
+  $('confirm-ok').textContent=isReset?'確認清空':'確認載入';
+  $('confirm-dialog').showModal();
+}
+function loadExample(kind, initialLoad=false) {
+  const triple=kind==='triple';
+  records=[{id:`r${++serial}`,date:triple?'2026-11-01':'2026-10-10',type:triple?'deposit':'card',amount:triple?'1500000':'30000',note:triple?'期末月份存入（虛構範例）':'上期信用卡費（虛構範例）'}];
+  rememberedSnapshots={};$('snapshot-fields').replaceChildren();
+  $('check-month').value=triple?'2026-12':'2026-11';$('month-count').value=triple?'3':'1';$('target').value=triple?'500000':'300000';$('initial').value=triple?'0':'300000';$('method').value='daily';$('card-spend').value=triple?'':'30000';$('topup-date').value=triple?'2026-11-01':'2026-10-20';
+  compareDates=triple?['2026-09-01','2026-10-01','2026-11-01']:['2026-10-10','2026-10-20','2026-10-25'];
+  updateMode(triple?'custom':'unicard');renderRecords();runCalculation();$('sample-tag').textContent='虛構範例';
+  if(!initialLoad)showToast(triple?'已載入三個月平均資產範例':'已載入單月扣繳後補存範例');
+}
+function resetData() {
+  const date=today(),[year,month]=date.slice(0,7).split('-').map(Number);
+  const nextMonth=month===12?`${year+1}-01`:`${year}-${String(month+1).padStart(2,'0')}`;
+  $('check-month').value=nextMonth;$('month-count').value='1';$('initial').value='0';$('card-spend').value='';$('method').value='daily';$('topup-date').value=date;records=[];compareDates=[date,'',''];rememberedSnapshots={};$('snapshot-fields').replaceChildren();
+  updateMode('unicard');renderRecords();markDirty();lastResult=null;lastPlan=null;$('sample-tag').textContent='新試算';$('placeholder-title').textContent='從第一筆資產，開始規劃';$('placeholder-copy').textContent='填入期初資產與異動，再按「開始試算」。';showToast('資料已清空');
+}
+
+for(let m=1;m<=12;m++) $('month-count').add(new Option(`${m} 個月`,String(m)));
+$('calculator').addEventListener('submit',event=>{event.preventDefault();runCalculation();if(window.matchMedia('(max-width:850px)').matches)$('results').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});});
+$('calculator').addEventListener('input',event=>{
+  const field=event.target,row=field.closest('[data-record]');
+  if(row && field.dataset.key) { records.find(r=>r.id===row.dataset.record)[field.dataset.key]=field.value;flagRecords(); }
+  if(field.dataset.snapshot)rememberedSnapshots[field.dataset.snapshot]=field.value;
+  if(field.id==='check-month')updatePeriod();
+  markDirty();
+});
+$('calculator').addEventListener('change',event=>{if(['month-count','method','check-month'].includes(event.target.id)){updatePeriod();markDirty();}if(event.target.dataset.key==='type'){const row=event.target.closest('[data-record]');records.find(r=>r.id===row.dataset.record).type=event.target.value;markDirty();}});
+document.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>{if(mode!==button.dataset.mode){updateMode(button.dataset.mode);markDirty();}}));
+document.querySelectorAll('[data-months]').forEach(button=>button.addEventListener('click',()=>{$('month-count').value=button.dataset.months;updatePeriod();markDirty();}));
+document.querySelectorAll('[data-target]').forEach(button=>button.addEventListener('click',()=>{$('target').value=button.dataset.target;markDirty();}));
+$('add-record').addEventListener('click',()=>{const period=currentPeriod();records.push({id:`r${++serial}`,date:period?.start||'',type:'deposit',amount:'',note:''});renderRecords();markDirty();document.querySelector(`[data-record="r${serial}"] input[data-key=amount]`).focus();});
+$('records').addEventListener('click',event=>{const button=event.target.closest('[data-delete]');if(button){records=records.filter(r=>r.id!==button.dataset.delete);renderRecords();markDirty();}});
+$('comparison-grid').addEventListener('change',event=>{if(event.target.dataset.compare!==undefined){compareDates[Number(event.target.dataset.compare)]=event.target.value;renderComparisons();}});
+$('recalculate').addEventListener('click',runCalculation);
+document.querySelectorAll('[data-example]').forEach(button=>button.addEventListener('click',()=>askReplace(()=>loadExample(button.dataset.example),false)));
+$('reset').addEventListener('click',()=>askReplace(resetData,true));
+$('confirm-cancel').addEventListener('click',()=>{$('confirm-dialog').close();pendingAction=null;});
+$('confirm-ok').addEventListener('click',()=>{$('confirm-dialog').close();const action=pendingAction;pendingAction=null;action?.();});
+$('confirm-dialog').addEventListener('cancel',()=>pendingAction=null);
+$('show-guide').addEventListener('click',()=>$('guide-dialog').showModal());
+document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>$(button.dataset.close).close()));
+$('open-details').addEventListener('click',()=>$('detail-panel').open=true);
+$('copy-summary').addEventListener('click',async()=>{
+  if(dirty||!lastResult)return;
+  const text=summaryText();
+  try {if(!navigator.clipboard?.writeText)throw new Error('Clipboard unavailable');await navigator.clipboard.writeText(text);showToast('試算摘要已複製');}
+  catch {$('summary-text').value=text;$('copy-dialog').showModal();$('summary-text').focus();$('summary-text').select();}
+});
+$('select-summary').addEventListener('click',()=>{$('summary-text').focus();$('summary-text').select();});
+loadExample('single',true);
+</script>
+</body>
+</html>

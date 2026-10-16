@@ -1,0 +1,9 @@
+node_modules/
+.serena/
+npm-debug.log*
+
+# Local documentation and tooling
+/docs/
+.env
+.env.*
+!.env.example
